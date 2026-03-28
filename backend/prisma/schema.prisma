@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // A user can track multiple shows
+  trackedMedia TrackedMedia[]
+}
+
+model Media {
+  id         String   @id @default(uuid())
+  aniListId  Int      @unique // The ID from the AniList GraphQL API
+  title      String
+  coverImage String?
+  status     String // e.g., RELEASING, FINISHED
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  episodes  Episode[]
+  trackedBy TrackedMedia[]
+}
+
+model Episode {
+  id            String   @id @default(uuid())
+  mediaId       String
+  episodeNumber Int
+  airDateUtc    DateTime // Strictly enforcing UTC as defined in AGENTS.md
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relation: If a Media title is deleted, delete all its episodes
+  media Media @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  // Industry Standard: Prevent duplicate episodes for the same show
+  @@unique([mediaId, episodeNumber])
+}
+
+// Join Table: Explicitly connects Users to Media (The "Watchlist")
+model TrackedMedia {
+  id      String   @id @default(uuid())
+  userId  String
+  mediaId String
+  notify  Boolean  @default(true) // Sets up our Phase 3 notification engine
+  addedAt DateTime @default(now())
+
+  // Relations with cascading deletes
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  media Media @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  // A user can only track a specific media title once
+  @@unique([userId, mediaId])
+}
