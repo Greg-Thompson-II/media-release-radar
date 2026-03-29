@@ -1,0 +1,21 @@
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.heading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.subheading {
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+}

@@ -1,5 +1,5 @@
 import { prisma } from "../lib/prisma.js";
-import { fetchReleasingMedia } from "./anilist.service.js";
+import { fetchOnAirShows, buildCoverImageUrl } from "./tmdb.service.js";
 
 export interface SyncResult {
   upserted: number;
@@ -8,44 +8,45 @@ export interface SyncResult {
 
 export async function runSync(): Promise<SyncResult> {
   console.log("Sync started.");
-  const mediaList = await fetchReleasingMedia();
+  const shows = await fetchOnAirShows();
 
   let upserted = 0;
   let errors = 0;
 
-  for (const item of mediaList) {
+  for (const show of shows) {
     try {
       const media = await prisma.media.upsert({
-        where: { aniListId: item.id },
+        where: { tmdbId: show.id },
         update: {
-          title: item.title.romaji,
-          coverImage: item.coverImage.large ?? null,
-          status: item.status,
+          title: show.name,
+          coverImage: buildCoverImageUrl(show.poster_path),
+          status: "RELEASING",
         },
         create: {
-          aniListId: item.id,
-          title: item.title.romaji,
-          coverImage: item.coverImage.large ?? null,
-          status: item.status,
+          tmdbId: show.id,
+          title: show.name,
+          coverImage: buildCoverImageUrl(show.poster_path),
+          status: "RELEASING",
         },
       });
 
-      if (item.nextAiringEpisode !== null) {
-        const { episode, airingAt } = item.nextAiringEpisode;
-        // Convert Unix seconds to a UTC Date object
-        const airDateUtc = new Date(airingAt * 1000);
+      if (show.next_episode_to_air !== null) {
+        const { episode_number, air_date } = show.next_episode_to_air;
+        // Append noon UTC to avoid the date shifting backwards when Calendar.tsx
+        // converts to US timezones (a bare "YYYY-MM-DD" parses as midnight UTC)
+        const airDateUtc = new Date(air_date + "T12:00:00Z");
 
         await prisma.episode.upsert({
           where: {
             mediaId_episodeNumber: {
               mediaId: media.id,
-              episodeNumber: episode,
+              episodeNumber: episode_number,
             },
           },
           update: { airDateUtc },
           create: {
             mediaId: media.id,
-            episodeNumber: episode,
+            episodeNumber: episode_number,
             airDateUtc,
           },
         });
@@ -54,7 +55,7 @@ export async function runSync(): Promise<SyncResult> {
       upserted++;
     } catch (error) {
       errors++;
-      console.error(`Failed to upsert aniListId ${item.id}:`, error);
+      console.error(`Failed to upsert TMDB show ID ${show.id}:`, error);
     }
   }
 

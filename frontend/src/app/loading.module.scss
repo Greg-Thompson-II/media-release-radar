@@ -1,0 +1,92 @@
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+$shimmer-bg: linear-gradient(
+  90deg,
+  color-mix(in srgb, var(--foreground) 6%, transparent) 25%,
+  color-mix(in srgb, var(--foreground) 12%, transparent) 50%,
+  color-mix(in srgb, var(--foreground) 6%, transparent) 75%
+);
+
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.skeleton {
+  border-radius: 4px;
+  background: $shimmer-bg;
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.headingSkeleton {
+  height: 2rem;
+  width: 220px;
+}
+
+.subheadingSkeleton {
+  height: 0.9rem;
+  width: 160px;
+  margin-top: 0.55rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.25rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  @media (min-width: 480px) {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.imageSkeleton {
+  width: 100%;
+  padding-bottom: 141%;
+  background: $shimmer-bg;
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+
+.titleSkeleton {
+  height: 0.85rem;
+  width: 85%;
+}
+
+.dateSkeleton {
+  height: 0.75rem;
+  width: 65%;
+}
+
+.buttonSkeleton {
+  height: 2rem;
+  width: 100%;
+  border-radius: 6px;
+  margin-top: 0.25rem;
+}

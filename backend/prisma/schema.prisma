@@ -19,7 +19,7 @@ model User {
 
 model Media {
   id         String   @id @default(uuid())
-  aniListId  Int      @unique // The ID from the AniList GraphQL API
+  tmdbId     Int      @unique // The ID from the TMDB API
   title      String
   coverImage String?
   status     String // e.g., RELEASING, FINISHED

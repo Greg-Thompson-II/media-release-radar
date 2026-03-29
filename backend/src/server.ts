@@ -3,6 +3,8 @@ import cors from "cors";
 import "dotenv/config";
 import { prisma } from "./lib/prisma.js";
 import syncRouter from "./routes/sync.routes.js";
+import mediaRouter from "./routes/media.routes.js";
+import watchlistRouter from "./routes/watchlist.routes.js";
 import { startSyncJob } from "./jobs/sync.job.js";
 
 // Initialize Express
@@ -15,6 +17,8 @@ app.use(express.json());
 
 // Routes
 app.use("/api/sync", syncRouter);
+app.use("/api/media", mediaRouter);
+app.use("/api/watchlist", watchlistRouter);
 
 // Enterprise-Grade Health Check Endpoint
 app.get("/api/health", async (req: Request, res: Response): Promise<void> => {

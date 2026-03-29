@@ -1,0 +1,24 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.25rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  @media (min-width: 480px) {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+.item {
+  // list-item reset — the card itself controls all visual presentation
+  display: contents;
+}
+
+.empty {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: color-mix(in srgb, var(--foreground) 50%, transparent);
+  font-size: 0.95rem;
+}
