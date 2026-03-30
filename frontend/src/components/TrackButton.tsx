@@ -6,15 +6,16 @@ import styles from "./TrackButton.module.scss";
 
 interface TrackButtonProps {
   mediaId: string;
+  initialIsTracked: boolean;
 }
 
-export default function TrackButton({ mediaId }: TrackButtonProps) {
+export default function TrackButton({ mediaId, initialIsTracked }: TrackButtonProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [isTracked, setIsTracked] = useState(false);
+  const [isTracked, setIsTracked] = useState(initialIsTracked);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleTrack() {
+  async function handleClick() {
     setIsLoading(true);
     setError(null);
 
@@ -22,7 +23,7 @@ export default function TrackButton({ mediaId }: TrackButtonProps) {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/watchlist`,
         {
-          method: "POST",
+          method: isTracked ? "DELETE" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ mediaId }),
         }
@@ -33,7 +34,7 @@ export default function TrackButton({ mediaId }: TrackButtonProps) {
         throw new Error(data.message ?? "Request failed");
       }
 
-      setIsTracked(true);
+      setIsTracked(!isTracked);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -46,11 +47,11 @@ export default function TrackButton({ mediaId }: TrackButtonProps) {
     <div className={styles.wrapper}>
       <button
         className={`${styles.button} ${isTracked ? styles.tracked : ""}`}
-        onClick={handleTrack}
-        disabled={isLoading || isTracked}
-        aria-label={isTracked ? "Already tracking this show" : "Track this show"}
+        onClick={handleClick}
+        disabled={isLoading}
+        aria-label={isTracked ? "Untrack this show" : "Track this show"}
       >
-        {isLoading ? "Tracking..." : isTracked ? "Tracked ✓" : "Track Show"}
+        {isLoading ? "Loading..." : isTracked ? "Untrack" : "Track Show"}
       </button>
       {error !== null && <p className={styles.error}>{error}</p>}
     </div>

@@ -45,3 +45,37 @@ export async function addToWatchlist(
     res.status(500).json({ message: "Failed to add to watchlist" });
   }
 }
+
+export async function removeFromWatchlist(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const { mediaId } = req.body as { mediaId?: string };
+
+  if (typeof mediaId !== "string" || mediaId.trim() === "") {
+    res.status(400).json({ message: "mediaId is required" });
+    return;
+  }
+
+  try {
+    const mockUser = await prisma.user.findUnique({
+      where: { email: MOCK_USER_EMAIL },
+    });
+
+    if (mockUser === null) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    await prisma.trackedMedia.delete({
+      where: {
+        userId_mediaId: { userId: mockUser.id, mediaId },
+      },
+    });
+
+    res.status(200).json({ message: "Removed from watchlist" });
+  } catch (error) {
+    console.error("Failed to remove from watchlist:", error);
+    res.status(500).json({ message: "Failed to remove from watchlist" });
+  }
+}

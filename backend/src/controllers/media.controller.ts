@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
 
+// TODO (Phase 3): Replace with authenticated user ID from session/JWT
+const MOCK_USER_EMAIL = "mock-user@media-radar.dev";
+
 interface MediaNextAiringEpisode {
   episodeNumber: number;
   airDateUtc: string;
@@ -8,18 +11,26 @@ interface MediaNextAiringEpisode {
 
 interface MediaResponseItem {
   id: string;
-  aniListId: number;
+  tmdbId: number;
   title: string;
   coverImage: string | null;
   status: string;
+  isTracked: boolean;
   nextAiringEpisode: MediaNextAiringEpisode | null;
 }
 
 export async function getReleasingMedia(
-  req: Request,
+  _req: Request,
   res: Response
 ): Promise<void> {
   try {
+    // Upsert mock user so we can check tracking state even on first load
+    const mockUser = await prisma.user.upsert({
+      where: { email: MOCK_USER_EMAIL },
+      update: {},
+      create: { email: MOCK_USER_EMAIL },
+    });
+
     const mediaList = await prisma.media.findMany({
       where: { status: "RELEASING" },
       include: {
@@ -28,16 +39,21 @@ export async function getReleasingMedia(
           orderBy: { airDateUtc: "asc" },
           take: 1,
         },
+        trackedBy: {
+          where: { userId: mockUser.id },
+          take: 1,
+        },
       },
       orderBy: { title: "asc" },
     });
 
     const response: MediaResponseItem[] = mediaList.map((media) => ({
       id: media.id,
-      aniListId: media.aniListId,
+      tmdbId: media.tmdbId,
       title: media.title,
       coverImage: media.coverImage,
       status: media.status,
+      isTracked: media.trackedBy.length > 0,
       nextAiringEpisode:
         media.episodes[0] !== undefined
           ? {

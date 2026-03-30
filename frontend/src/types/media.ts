@@ -5,9 +5,10 @@ export interface MediaNextAiringEpisode {
 
 export interface MediaItem {
   id: string;
-  aniListId: number;
+  tmdbId: number;
   title: string;
   coverImage: string | null;
   status: string;
+  isTracked: boolean;
   nextAiringEpisode: MediaNextAiringEpisode | null;
 }

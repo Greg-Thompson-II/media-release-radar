@@ -40,7 +40,7 @@ export default function MediaCard({ media }: MediaCardProps) {
           <p className={styles.noDate}>No upcoming episode</p>
         )}
 
-        <TrackButton mediaId={media.id} />
+        <TrackButton mediaId={media.id} initialIsTracked={media.isTracked} />
       </div>
     </article>
   );
