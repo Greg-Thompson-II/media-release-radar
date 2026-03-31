@@ -1,31 +1,56 @@
 # Real-Time Media Release Radar
 
-## Overview
-A full-stack web application designed to track episodic media release schedules, manage user-specific watchlists, and provide timezone-accurate release notifications. 
+A full-stack web application that automatically tracks and displays upcoming TV show releases. Built with a decoupled architecture, featuring a background data-ingestion engine and a highly optimized Next.js frontend.
 
-## Architecture & Tech Stack
-This project is built with a focus on strict typing, modularity, and scalable background processing.
+## 🚀 Current Status: Phase 2 Complete
+- **Data Engine:** Automated backend synchronization with the TMDB API.
+- **Frontend:** Server-Side Rendered (SSR) discovery dashboard with client-side watchlist hydration.
 
-**Frontend:**
-* **Framework:** Next.js / React
-* **Language:** TypeScript
-* **Styling:** SCSS (Modular)
+## 🛠 Tech Stack
+* **Frontend:** Next.js 16 (App Router), React, TypeScript, SCSS Modules
+* **Backend:** Node.js, Express, TypeScript, node-cron
+* **Database:** PostgreSQL (via Neon)
+* **ORM:** Prisma 7 (@prisma/adapter-pg)
+* **External API:** TMDB (The Movie Database)
 
-**Backend & Data (Upcoming):**
-* **Runtime:** Node.js / Express
-* **Database:** PostgreSQL (via Prisma ORM)
-* **Background Processing:** node-cron for automated API polling
-* **External API:** AniList GraphQL API
+## ✨ Key Features
+* **Automated Data Ingestion:** A `node-cron` job runs daily at 00:00 UTC, fetching currently airing TV shows from TMDB and upserting the data into a PostgreSQL database to prevent frontend rate-limiting.
+* **Optimized UI:** Next.js Server Components fetch and render the discovery grid instantly, while Client Components handle interactive features (like tracking shows).
+* **Timezone-Aware Calendar:** UTC air dates are dynamically converted to the user's localized timezone directly in the browser using the native `Intl` API.
+* **Watchlist State Hydration:** The frontend dynamically hydrates button states based on the user's database records, allowing seamless tracking and untracking.
+* **Sticky Client-Side Filtering:** Users can instantly toggle between all releasing media and their personal tracked watchlist without triggering additional network requests.
 
-## Core Features
-* **Automated Data Ingestion:** Background workers poll third-party GraphQL APIs to keep release schedules updated in real-time.
-* **Timezone Synchronization:** Converts UTC air times to the user's localized timezone dynamically on the client.
-* **User Watchlists:** Secure data models allowing users to track specific media and receive targeted updates.
+## ⚙️ Local Development Setup
 
-## Local Development
-*(Instructions for running the frontend and backend locally will be added as the environments are initialized.)*
+### 1. Environment Variables
+You will need to configure `.env` files in both the frontend and backend directories.
 
-1. Clone the repository
-2. `npm install`
-3. Set up `.env` variables (See `.env.example`)
-4. `npm run dev`
+**Backend (`backend/.env`):**
+```env
+PORT=5000
+DATABASE_URL="postgresql://user:password@host/db"
+TMDB_API_TOKEN="your_tmdb_read_access_token"
+```
+
+**Frontend (`frontend/.env.local`):**
+```env
+BACKEND_URL="http://localhost:5000"
+NEXT_PUBLIC_BACKEND_URL="http://localhost:5000"
+```
+
+### 2. Run the Application
+Start the backend server and data engine:
+```bash
+cd backend
+npm install
+npx prisma generate
+npx prisma migrate dev
+npm run dev
+```
+
+Start the Next.js frontend:
+```bash
+cd frontend
+npm install
+npm run dev
+```
