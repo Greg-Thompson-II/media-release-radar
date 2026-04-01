@@ -7,12 +7,19 @@ export interface TMDBNextEpisode {
   air_date: string; // "YYYY-MM-DD" date string only, no time component
 }
 
+export interface TMDBNetwork {
+  id: number;
+  name: string;
+  logo_path: string | null;
+}
+
 export interface TMDBShowDetail {
   id: number;
   name: string;
   poster_path: string | null;
   status: string;
   next_episode_to_air: TMDBNextEpisode | null;
+  networks: TMDBNetwork[];
 }
 
 interface TMDBListShow {
@@ -29,6 +36,7 @@ interface TMDBOnAirResponse {
 
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
+const TMDB_LOGO_BASE = "https://image.tmdb.org/t/p/w154";
 const FETCH_TIMEOUT_MS = 30_000;
 const MAX_RETRIES = 3;
 // Delay between individual show detail calls to respect rate limits (~40 req/10s)
@@ -100,6 +108,11 @@ async function fetchWithRetry<T>(url: string): Promise<T> {
 export function buildCoverImageUrl(posterPath: string | null): string | null {
   if (!posterPath) return null;
   return `${TMDB_IMAGE_BASE}${posterPath}`;
+}
+
+export function buildLogoUrl(logoPath: string | null): string | null {
+  if (!logoPath) return null;
+  return `${TMDB_LOGO_BASE}${logoPath}`;
 }
 
 // --- Public API ---

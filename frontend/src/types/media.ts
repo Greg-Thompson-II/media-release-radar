@@ -8,7 +8,22 @@ export interface MediaItem {
   tmdbId: number;
   title: string;
   coverImage: string | null;
+  network: string | null;
+  networkLogoUrl: string | null;
   status: string;
   isTracked: boolean;
   nextAiringEpisode: MediaNextAiringEpisode | null;
+}
+
+export interface MediaNetwork {
+  name: string;
+  logoUrl: string | null;
+}
+
+export interface MediaDetail extends MediaItem {
+  overview: string | null;
+  genres: string[];
+  networks: MediaNetwork[];
+  numberOfSeasons: number;
+  numberOfEpisodes: number;
 }

@@ -1,5 +1,5 @@
 import { prisma } from "../lib/prisma.js";
-import { fetchOnAirShows, buildCoverImageUrl } from "./tmdb.service.js";
+import { fetchOnAirShows, buildCoverImageUrl, buildLogoUrl } from "./tmdb.service.js";
 
 export interface SyncResult {
   upserted: number;
@@ -15,17 +15,25 @@ export async function runSync(): Promise<SyncResult> {
 
   for (const show of shows) {
     try {
+      const primaryNetwork = show.networks[0] ?? null;
+      const networkName = primaryNetwork?.name ?? null;
+      const networkLogoUrl = buildLogoUrl(primaryNetwork?.logo_path ?? null);
+
       const media = await prisma.media.upsert({
         where: { tmdbId: show.id },
         update: {
           title: show.name,
           coverImage: buildCoverImageUrl(show.poster_path),
+          network: networkName,
+          networkLogoUrl,
           status: "RELEASING",
         },
         create: {
           tmdbId: show.id,
           title: show.name,
           coverImage: buildCoverImageUrl(show.poster_path),
+          network: networkName,
+          networkLogoUrl,
           status: "RELEASING",
         },
       });

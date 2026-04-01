@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { MediaItem } from "@/types/media";
 import Calendar from "./Calendar";
 import TrackButton from "./TrackButton";
@@ -11,7 +12,7 @@ interface MediaCardProps {
 export default function MediaCard({ media }: MediaCardProps) {
   return (
     <article className={styles.card}>
-      <div className={styles.imageWrapper}>
+      <Link href={`/media/${media.id}`} className={styles.imageWrapper}>
         {media.coverImage !== null ? (
           <Image
             src={media.coverImage}
@@ -46,10 +47,17 @@ export default function MediaCard({ media }: MediaCardProps) {
             <span className={styles.placeholderLabel}>No Image</span>
           </div>
         )}
-      </div>
+        {media.network !== null && (
+          <div className={styles.networkBadge}>
+            {media.network}
+          </div>
+        )}
+      </Link>
 
       <div className={styles.info}>
-        <h2 className={styles.title}>{media.title}</h2>
+        <Link href={`/media/${media.id}`} className={styles.titleLink}>
+          <h2 className={styles.title}>{media.title}</h2>
+        </Link>
 
         {media.nextAiringEpisode !== null ? (
           <div className={styles.episode}>

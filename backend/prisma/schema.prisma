@@ -18,11 +18,13 @@ model User {
 }
 
 model Media {
-  id         String   @id @default(uuid())
-  tmdbId     Int      @unique // The ID from the TMDB API
-  title      String
-  coverImage String?
-  status     String // e.g., RELEASING, FINISHED
+  id             String   @id @default(uuid())
+  tmdbId         Int      @unique // The ID from the TMDB API
+  title          String
+  coverImage     String?
+  network        String?  // Primary network/streaming service name
+  networkLogoUrl String?  // TMDB logo URL for the primary network
+  status         String   // e.g., RELEASING, FINISHED
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
