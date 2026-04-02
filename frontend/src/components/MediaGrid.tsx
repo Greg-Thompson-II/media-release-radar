@@ -11,33 +11,53 @@ interface MediaGridProps {
 
 export default function MediaGrid({ mediaList }: MediaGridProps) {
   const [showOnlyTracked, setShowOnlyTracked] = useState(false);
+  const [query, setQuery] = useState("");
 
-  const displayList = showOnlyTracked
-    ? mediaList.filter((media) => media.isTracked)
-    : mediaList;
+  const normalizedQuery = query.trim().toLowerCase();
+
+  const displayList = mediaList.filter((media) => {
+    const matchesFilter = showOnlyTracked ? media.isTracked : true;
+    const matchesSearch =
+      normalizedQuery === "" ||
+      media.title.toLowerCase().includes(normalizedQuery);
+    return matchesFilter && matchesSearch;
+  });
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.controls}>
-        <button
-          className={`${styles.toggle} ${!showOnlyTracked ? styles.active : ""}`}
-          onClick={() => setShowOnlyTracked(false)}
-          aria-pressed={!showOnlyTracked}
-        >
-          View All
-        </button>
-        <button
-          className={`${styles.toggle} ${showOnlyTracked ? styles.active : ""}`}
-          onClick={() => setShowOnlyTracked(true)}
-          aria-pressed={showOnlyTracked}
-        >
-          My Watchlist
-        </button>
+        <div className={styles.toggleGroup}>
+          <button
+            className={`${styles.toggle} ${!showOnlyTracked ? styles.active : ""}`}
+            onClick={() => setShowOnlyTracked(false)}
+            aria-pressed={!showOnlyTracked}
+          >
+            View All
+          </button>
+          <button
+            className={`${styles.toggle} ${showOnlyTracked ? styles.active : ""}`}
+            onClick={() => setShowOnlyTracked(true)}
+            aria-pressed={showOnlyTracked}
+          >
+            My Watchlist
+          </button>
+        </div>
+
+        <input
+          className={styles.search}
+          type="search"
+          placeholder="Search shows..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          aria-label="Search shows"
+        />
       </div>
 
       {displayList.length === 0 ? (
         <p className={styles.empty}>
-          {showOnlyTracked
+          {normalizedQuery !== ""
+            ? `No results for "${query}".`
+            : showOnlyTracked
             ? "You haven't tracked any shows yet."
             : "No releasing titles found. Run a sync to populate the database."}
         </p>

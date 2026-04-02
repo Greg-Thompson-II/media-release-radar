@@ -68,8 +68,14 @@ export async function getReleasingMedia(
           take: 1,
         },
       },
-      orderBy: { title: "asc" },
+      orderBy: { title: "asc" }, // secondary sort; refined below
     });
+
+    function sortKey(title: string): string {
+      return title.replace(/^the\s+/i, "").toLowerCase();
+    }
+
+    mediaList.sort((a, b) => sortKey(a.title).localeCompare(sortKey(b.title)));
 
     const response: MediaResponseItem[] = mediaList.map((media) => ({
       id: media.id,

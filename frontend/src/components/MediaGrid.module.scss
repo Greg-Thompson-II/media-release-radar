@@ -6,13 +6,46 @@
 
 .controls {
   display: flex;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 1rem;
   position: sticky;
   top: 0;
   z-index: 10;
   background: var(--background);
   padding-block: 0.75rem;
   box-shadow: 0 1px 0 color-mix(in srgb, var(--foreground) 10%, transparent);
+}
+
+.toggleGroup {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.search {
+  flex: 1;
+  max-width: 320px;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--foreground) 20%, transparent);
+  background: transparent;
+  color: var(--foreground);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+
+  &::placeholder {
+    color: color-mix(in srgb, var(--foreground) 40%, transparent);
+  }
+
+  &:focus {
+    border-color: color-mix(in srgb, var(--foreground) 50%, transparent);
+  }
+
+  // Remove the default browser "x" clear button on search inputs
+  &::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+  }
 }
 
 .toggle {
