@@ -1,3 +1,4 @@
+import type { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import type { MediaDetail } from "@/types/media";
@@ -7,6 +8,19 @@ import styles from "./page.module.scss";
 
 interface Props {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata(
+  { params }: Props,
+  _parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { id } = await params;
+  try {
+    const media = await getMediaDetail(id);
+    return { title: `${media.title} | Release Radar` };
+  } catch {
+    return { title: "Show Not Found | Release Radar" };
+  }
 }
 
 async function getMediaDetail(id: string): Promise<MediaDetail> {
