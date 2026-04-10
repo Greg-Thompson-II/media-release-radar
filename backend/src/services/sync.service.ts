@@ -1,5 +1,8 @@
 import { prisma } from "../lib/prisma.js";
 import { fetchOnAirShows, buildCoverImageUrl, buildLogoUrl } from "./tmdb.service.js";
+import { getExactAirTime } from "./tvmaze.service.js";
+
+const TVMAZE_DELAY_MS = 600;
 
 export interface SyncResult {
   upserted: number;
@@ -40,9 +43,16 @@ export async function runSync(): Promise<SyncResult> {
 
       if (show.next_episode_to_air !== null) {
         const { episode_number, air_date } = show.next_episode_to_air;
-        // Append noon UTC to avoid the date shifting backwards when Calendar.tsx
-        // converts to US timezones (a bare "YYYY-MM-DD" parses as midnight UTC)
-        const airDateUtc = new Date(air_date + "T12:00:00Z");
+
+        const airstamp = await getExactAirTime(show.name);
+        await new Promise((resolve) => setTimeout(resolve, TVMAZE_DELAY_MS));
+
+        const hasExactTime = airstamp !== null;
+        // Prefer TVMaze's exact airstamp; fall back to noon UTC on the TMDB date
+        // to avoid the date shifting backwards in US timezones.
+        const airDateUtc = hasExactTime
+          ? new Date(airstamp)
+          : new Date(air_date + "T12:00:00Z");
 
         await prisma.episode.upsert({
           where: {
@@ -51,11 +61,12 @@ export async function runSync(): Promise<SyncResult> {
               episodeNumber: episode_number,
             },
           },
-          update: { airDateUtc },
+          update: { airDateUtc, hasExactTime },
           create: {
             mediaId: media.id,
             episodeNumber: episode_number,
             airDateUtc,
+            hasExactTime,
           },
         });
       }

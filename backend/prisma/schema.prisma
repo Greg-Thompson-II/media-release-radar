@@ -38,6 +38,7 @@ model Episode {
   mediaId       String
   episodeNumber Int
   airDateUtc    DateTime // Strictly enforcing UTC as defined in AGENTS.md
+  hasExactTime  Boolean  @default(false) // true = TVMaze airstamp, false = noon UTC fallback
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

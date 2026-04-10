@@ -1,6 +1,7 @@
 export interface MediaNextAiringEpisode {
   episodeNumber: number;
   airDateUtc: string; // ISO 8601 UTC string, e.g. "2026-03-29T14:00:00.000Z"
+  hasExactTime: boolean; // true = TVMaze airstamp, false = noon UTC fallback (date only)
 }
 
 export interface MediaItem {

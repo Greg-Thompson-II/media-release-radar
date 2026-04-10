@@ -10,6 +10,7 @@ const TMDB_LOGO_BASE = "https://image.tmdb.org/t/p/w154";
 interface MediaNextAiringEpisode {
   episodeNumber: number;
   airDateUtc: string;
+  hasExactTime: boolean;
 }
 
 interface MediaResponseItem {
@@ -91,6 +92,7 @@ export async function getReleasingMedia(
           ? {
               episodeNumber: media.episodes[0].episodeNumber,
               airDateUtc: media.episodes[0].airDateUtc.toISOString(),
+              hasExactTime: media.episodes[0].hasExactTime,
             }
           : null,
     }));
@@ -162,6 +164,7 @@ export async function getMediaById(
           ? {
               episodeNumber: nextEpisode.episodeNumber,
               airDateUtc: nextEpisode.airDateUtc.toISOString(),
+              hasExactTime: nextEpisode.hasExactTime,
             }
           : null,
       overview: tmdbDetail.overview || null,

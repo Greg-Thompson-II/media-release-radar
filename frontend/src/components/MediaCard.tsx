@@ -64,7 +64,7 @@ export default function MediaCard({ media }: MediaCardProps) {
             <span className={styles.episodeNumber}>
               Ep {media.nextAiringEpisode.episodeNumber}
             </span>
-            <Calendar airDateUtc={media.nextAiringEpisode.airDateUtc} />
+            <Calendar airDateUtc={media.nextAiringEpisode.airDateUtc} hasExactTime={media.nextAiringEpisode.hasExactTime} />
           </div>
         ) : (
           <p className={styles.noDate}>No upcoming episode</p>
