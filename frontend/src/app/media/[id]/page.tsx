@@ -40,7 +40,16 @@ export default async function MediaDetailPage({ params }: Props) {
   const media = await getMediaDetail(id);
 
   return (
-    <main className={styles.main}>
+    <div className={styles.page}>
+      {media.coverImage !== null && (
+        <div
+          className={styles.backdrop}
+          style={{ backgroundImage: `url(${media.coverImage})` }}
+          aria-hidden="true"
+        />
+      )}
+
+      <main className={styles.main}>
       <Link href="/" className={styles.back}>
         &larr; Back to all shows
       </Link>
@@ -105,6 +114,7 @@ export default async function MediaDetailPage({ params }: Props) {
           <TrackButton mediaId={media.id} initialIsTracked={media.isTracked} />
         </div>
       </div>
-    </main>
+      </main>
+    </div>
   );
 }

@@ -11,7 +11,9 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  background: var(--background);
+  background: color-mix(in srgb, var(--background) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding-block: 0.75rem;
   box-shadow: 0 1px 0 color-mix(in srgb, var(--foreground) 10%, transparent);
 }
@@ -31,15 +33,17 @@
   background: transparent;
   color: var(--foreground);
   font-size: 0.85rem;
+  font-family: inherit;
   outline: none;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   &::placeholder {
     color: color-mix(in srgb, var(--foreground) 40%, transparent);
   }
 
   &:focus {
-    border-color: color-mix(in srgb, var(--foreground) 50%, transparent);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
   }
 
   // Remove the default browser "x" clear button on search inputs
@@ -57,7 +61,7 @@
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
     background: color-mix(in srgb, var(--foreground) 8%, transparent);
@@ -66,9 +70,10 @@
   }
 
   &.active {
-    background: var(--foreground);
-    color: var(--background);
-    border-color: var(--foreground);
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
   }
 }
 
