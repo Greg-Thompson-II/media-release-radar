@@ -1,42 +1,44 @@
 import { Request, Response } from "express";
+import { getAuth } from "@clerk/express";
 import { prisma } from "../lib/prisma.js";
-
-// TODO (Phase 3): Replace with authenticated user ID from session/JWT
-const MOCK_USER_EMAIL = "mock-user@media-radar.dev";
 
 export async function addToWatchlist(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { mediaId } = req.body as { mediaId?: string };
+  const { userId } = getAuth(req);
+  if (userId === null) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
 
+  const { mediaId } = req.body as { mediaId?: string };
   if (typeof mediaId !== "string" || mediaId.trim() === "") {
     res.status(400).json({ message: "mediaId is required" });
     return;
   }
 
   try {
-    // Verify the media title exists before attempting to track it
     const media = await prisma.media.findUnique({ where: { id: mediaId } });
     if (media === null) {
       res.status(404).json({ message: "Media not found" });
       return;
     }
 
-    // Ensure the mock user exists (Phase 3 will replace with real auth)
-    const mockUser = await prisma.user.upsert({
-      where: { email: MOCK_USER_EMAIL },
+    // Upsert the Clerk user into our DB so we have a local FK to track against
+    const user = await prisma.user.upsert({
+      where: { clerkId: userId },
       update: {},
-      create: { email: MOCK_USER_EMAIL },
+      create: { clerkId: userId },
     });
 
     // Upsert is idempotent — safe to call multiple times for the same show
     const trackedMedia = await prisma.trackedMedia.upsert({
       where: {
-        userId_mediaId: { userId: mockUser.id, mediaId },
+        userId_mediaId: { userId: user.id, mediaId },
       },
       update: {},
-      create: { userId: mockUser.id, mediaId },
+      create: { userId: user.id, mediaId },
     });
 
     res.status(201).json({ message: "Added to watchlist", trackedMedia });
@@ -50,26 +52,28 @@ export async function removeFromWatchlist(
   req: Request,
   res: Response
 ): Promise<void> {
-  const { mediaId } = req.body as { mediaId?: string };
+  const { userId } = getAuth(req);
+  if (userId === null) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
 
+  const { mediaId } = req.body as { mediaId?: string };
   if (typeof mediaId !== "string" || mediaId.trim() === "") {
     res.status(400).json({ message: "mediaId is required" });
     return;
   }
 
   try {
-    const mockUser = await prisma.user.findUnique({
-      where: { email: MOCK_USER_EMAIL },
-    });
-
-    if (mockUser === null) {
+    const user = await prisma.user.findUnique({ where: { clerkId: userId } });
+    if (user === null) {
       res.status(404).json({ message: "User not found" });
       return;
     }
 
     await prisma.trackedMedia.delete({
       where: {
-        userId_mediaId: { userId: mockUser.id, mediaId },
+        userId_mediaId: { userId: user.id, mediaId },
       },
     });
 

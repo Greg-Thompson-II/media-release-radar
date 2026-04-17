@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import styles from "./TrackButton.module.scss";
 
 interface TrackButtonProps {
@@ -11,6 +12,7 @@ interface TrackButtonProps {
 
 export default function TrackButton({ mediaId, initialIsTracked }: TrackButtonProps) {
   const router = useRouter();
+  const { getToken } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isTracked, setIsTracked] = useState(initialIsTracked);
   const [error, setError] = useState<string | null>(null);
@@ -20,11 +22,15 @@ export default function TrackButton({ mediaId, initialIsTracked }: TrackButtonPr
     setError(null);
 
     try {
+      const token = await getToken();
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/watchlist`,
         {
           method: isTracked ? "DELETE" : "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(token !== null && { Authorization: `Bearer ${token}` }),
+          },
           body: JSON.stringify({ mediaId }),
         }
       );

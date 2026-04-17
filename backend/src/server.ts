@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import "dotenv/config";
+import { clerkMiddleware } from "@clerk/express";
 import { prisma } from "./lib/prisma.js";
 import syncRouter from "./routes/sync.routes.js";
 import mediaRouter from "./routes/media.routes.js";
@@ -14,6 +15,10 @@ const PORT = process.env.PORT || 5000;
 // Standard Middleware
 app.use(cors());
 app.use(express.json());
+app.use(clerkMiddleware({
+  publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+  secretKey: process.env.CLERK_SECRET_KEY,
+}));
 
 // Routes
 app.use("/api/sync", syncRouter);

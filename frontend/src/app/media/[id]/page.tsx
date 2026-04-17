@@ -1,6 +1,7 @@
 import type { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 import type { MediaDetail } from "@/types/media";
 import Calendar from "@/components/Calendar";
 import TrackButton from "@/components/TrackButton";
@@ -24,8 +25,13 @@ export async function generateMetadata(
 }
 
 async function getMediaDetail(id: string): Promise<MediaDetail> {
+  const { getToken } = await auth();
+  const token = await getToken();
   const res = await fetch(`${process.env.BACKEND_URL}/api/media/${id}`, {
     cache: "no-store",
+    headers: {
+      ...(token !== null && { Authorization: `Bearer ${token}` }),
+    },
   });
 
   if (!res.ok) {

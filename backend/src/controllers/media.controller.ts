@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
+import { getAuth } from "@clerk/express";
 import { prisma } from "../lib/prisma.js";
-
-// TODO (Phase 3): Replace with authenticated user ID from session/JWT
-const MOCK_USER_EMAIL = "mock-user@media-radar.dev";
 
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 const TMDB_LOGO_BASE = "https://image.tmdb.org/t/p/w154";
@@ -44,17 +42,20 @@ interface TMDBDetailResponse {
   number_of_episodes: number;
 }
 
+// Resolves the local DB user id for a given Clerk user id, or null if not signed in.
+async function resolveLocalUserId(clerkUserId: string | null): Promise<string | null> {
+  if (clerkUserId === null) return null;
+  const user = await prisma.user.findUnique({ where: { clerkId: clerkUserId } });
+  return user?.id ?? null;
+}
+
 export async function getReleasingMedia(
-  _req: Request,
+  req: Request,
   res: Response
 ): Promise<void> {
   try {
-    // Upsert mock user so we can check tracking state even on first load
-    const mockUser = await prisma.user.upsert({
-      where: { email: MOCK_USER_EMAIL },
-      update: {},
-      create: { email: MOCK_USER_EMAIL },
-    });
+    const { userId: clerkUserId } = getAuth(req);
+    const localUserId = await resolveLocalUserId(clerkUserId);
 
     const mediaList = await prisma.media.findMany({
       where: { status: "RELEASING" },
@@ -65,7 +66,8 @@ export async function getReleasingMedia(
           take: 1,
         },
         trackedBy: {
-          where: { userId: mockUser.id },
+          // Use a guaranteed-miss value when not signed in so isTracked is always false
+          where: { userId: localUserId ?? "" },
           take: 1,
         },
       },
@@ -111,11 +113,8 @@ export async function getMediaById(
   const id = req.params.id;
 
   try {
-    const mockUser = await prisma.user.upsert({
-      where: { email: MOCK_USER_EMAIL },
-      update: {},
-      create: { email: MOCK_USER_EMAIL },
-    });
+    const { userId: clerkUserId } = getAuth(req);
+    const localUserId = await resolveLocalUserId(clerkUserId);
 
     const mediaWithRelations = await prisma.media.findUnique({
       where: { id },
@@ -126,7 +125,7 @@ export async function getMediaById(
           take: 1,
         },
         trackedBy: {
-          where: { userId: mockUser.id },
+          where: { userId: localUserId ?? "" },
           take: 1,
         },
       },
