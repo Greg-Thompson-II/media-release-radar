@@ -33,6 +33,10 @@ export default function RootLayout({
             <Link href="/" className={styles.brand}>
               Media Release Radar
             </Link>
+            <div className={styles.navLinks}>
+              <Link href="/" className={styles.navLink}>All Shows</Link>
+              <Link href="/calendar" className={styles.navLink}>Calendar</Link>
+            </div>
             <div className={styles.authArea}>
               <Show when="signed-out">
                 <SignInButton>

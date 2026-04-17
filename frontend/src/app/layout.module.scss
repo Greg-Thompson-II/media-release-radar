@@ -21,6 +21,29 @@
   text-decoration: none;
 }
 
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1;
+  margin-left: 1.5rem;
+}
+
+.navLink {
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  text-decoration: none;
+  transition: color 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    color: var(--foreground);
+    background: color-mix(in srgb, var(--foreground) 7%, transparent);
+  }
+}
+
 .authArea {
   display: flex;
   align-items: center;

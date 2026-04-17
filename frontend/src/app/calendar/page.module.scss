@@ -1,0 +1,176 @@
+.main {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 1rem 6rem;
+
+  @media (min-width: 640px) {
+    padding: 2rem 1.5rem 6rem;
+  }
+}
+
+.header {
+  margin-bottom: 2.5rem;
+}
+
+.heading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  background: linear-gradient(135deg, var(--foreground) 40%, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subheading {
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+}
+
+// ---------------------------------------------------------------------------
+// Agenda sections
+// ---------------------------------------------------------------------------
+
+.agenda {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dateHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+}
+
+.dateLabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+}
+
+.todayBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+}
+
+// ---------------------------------------------------------------------------
+// Show list
+// ---------------------------------------------------------------------------
+
+.showList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.showRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+  background: color-mix(in srgb, var(--foreground) 3%, var(--background));
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    background: color-mix(in srgb, var(--foreground) 5%, var(--background));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Poster thumbnail
+// ---------------------------------------------------------------------------
+
+.posterWrapper {
+  position: relative;
+  flex-shrink: 0;
+  width: 44px;
+  aspect-ratio: 2 / 3;
+  border-radius: 5px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--foreground) 8%, var(--background));
+}
+
+.poster {
+  object-fit: cover;
+}
+
+.posterPlaceholder {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--foreground) 10%, var(--background));
+}
+
+// ---------------------------------------------------------------------------
+// Show info (title + meta)
+// ---------------------------------------------------------------------------
+
+.showInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.showTitle {
+  font-size: 0.925rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.episodeMeta {
+  font-size: 0.775rem;
+  color: color-mix(in srgb, var(--foreground) 50%, transparent);
+}
+
+// ---------------------------------------------------------------------------
+// Time block (right-aligned)
+// ---------------------------------------------------------------------------
+
+.timeBlock {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.airTime {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.airTimeUnknown {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: color-mix(in srgb, var(--foreground) 35%, transparent);
+  white-space: nowrap;
+}
