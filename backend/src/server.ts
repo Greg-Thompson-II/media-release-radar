@@ -6,6 +6,7 @@ import { prisma } from "./lib/prisma.js";
 import syncRouter from "./routes/sync.routes.js";
 import mediaRouter from "./routes/media.routes.js";
 import watchlistRouter from "./routes/watchlist.routes.js";
+import calendarRouter from "./routes/calendar.routes.js";
 import { startSyncJob } from "./jobs/sync.job.js";
 
 // Initialize Express
@@ -24,9 +25,10 @@ app.use(clerkMiddleware({
 app.use("/api/sync", syncRouter);
 app.use("/api/media", mediaRouter);
 app.use("/api/watchlist", watchlistRouter);
+app.use("/api/calendar", calendarRouter);
 
 // Enterprise-Grade Health Check Endpoint
-app.get("/api/health", async (req: Request, res: Response): Promise<void> => {
+app.get("/api/health", async (_req: Request, res: Response): Promise<void> => {
   try {
     // Ping the database to ensure the connection pool is alive
     await prisma.$queryRaw`SELECT 1`;

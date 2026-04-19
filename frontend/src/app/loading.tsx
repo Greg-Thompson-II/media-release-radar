@@ -10,6 +10,12 @@ export default function Loading() {
         <div className={`${styles.skeleton} ${styles.subheadingSkeleton}`} />
       </header>
 
+      <div className={styles.controls} aria-hidden="true">
+        <div className={`${styles.skeleton} ${styles.toggleSkeleton}`} />
+        <div className={`${styles.skeleton} ${styles.toggleSkeleton}`} />
+        <div className={`${styles.skeleton} ${styles.searchSkeleton}`} />
+      </div>
+
       <ul className={styles.grid} aria-label="Loading shows..." aria-busy="true">
         {Array.from({ length: 12 }).map((_, i) => (
           <li key={i} className={styles.card}>

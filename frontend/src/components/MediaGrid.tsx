@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { MediaItem } from "@/types/media";
 import MediaCard from "./MediaCard";
 import styles from "./MediaGrid.module.scss";
@@ -10,7 +11,8 @@ interface MediaGridProps {
 }
 
 export default function MediaGrid({ mediaList }: MediaGridProps) {
-  const [showOnlyTracked, setShowOnlyTracked] = useState(false);
+  const searchParams = useSearchParams();
+  const [showOnlyTracked, setShowOnlyTracked] = useState(() => searchParams.get("watchlist") === "1");
   const [query, setQuery] = useState("");
 
   const normalizedQuery = query.trim().toLowerCase();

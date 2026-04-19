@@ -1,5 +1,9 @@
 import { prisma } from "../lib/prisma.js";
-import { fetchOnAirShows, buildCoverImageUrl, buildLogoUrl } from "./tmdb.service.js";
+import {
+  fetchOnAirShows,
+  buildCoverImageUrl,
+  buildLogoUrl,
+} from "./tmdb.service.js";
 import { getExactAirTime } from "./tvmaze.service.js";
 
 const TVMAZE_DELAY_MS = 600;
@@ -15,6 +19,7 @@ export async function runSync(): Promise<SyncResult> {
 
   let upserted = 0;
   let errors = 0;
+  const syncedTmdbIds: number[] = [];
 
   for (const show of shows) {
     try {
@@ -40,6 +45,8 @@ export async function runSync(): Promise<SyncResult> {
           status: "RELEASING",
         },
       });
+
+      syncedTmdbIds.push(show.id);
 
       if (show.next_episode_to_air !== null) {
         const { episode_number, air_date } = show.next_episode_to_air;
@@ -78,6 +85,20 @@ export async function runSync(): Promise<SyncResult> {
     }
   }
 
-  console.log(`Sync complete. Upserted: ${upserted}, Errors: ${errors}`);
+  /**
+   * Mark any previously-RELEASING show that wasn't in this sync as ENDED.
+   * This keeps the DB in sync with TMDB's on_the_air list automatically.
+   */
+  const { count: retired } = await prisma.media.updateMany({
+    where: {
+      status: "RELEASING",
+      tmdbId: { notIn: syncedTmdbIds },
+    },
+    data: { status: "ENDED" },
+  });
+
+  console.log(
+    `Sync complete. Upserted: ${upserted}, Retired: ${retired}, Errors: ${errors}`,
+  );
   return { upserted, errors };
 }

@@ -12,7 +12,9 @@ $shimmer-bg: linear-gradient(
 
 .page {
   position: relative;
-  min-height: 100vh;
+  min-height: calc(100vh - 56px);
+  display: flex;
+  align-items: center;
 }
 
 .backdropSkeleton {
@@ -28,7 +30,7 @@ $shimmer-bg: linear-gradient(
   width: 100%;
   max-width: 1000px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  padding: 2rem 1.5rem 2rem;
 }
 
 .skeleton {

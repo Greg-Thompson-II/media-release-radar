@@ -143,15 +143,8 @@ export async function getMediaById(
       },
     });
 
-    if (!tmdbRes.ok) {
-      res.status(502).json({ message: "Failed to fetch details from TMDB" });
-      return;
-    }
-
-    const tmdbDetail = (await tmdbRes.json()) as TMDBDetailResponse;
     const nextEpisode = mediaWithRelations.episodes[0];
-
-    res.status(200).json({
+    const baseResponse = {
       id: mediaWithRelations.id,
       tmdbId: mediaWithRelations.tmdbId,
       title: mediaWithRelations.title,
@@ -166,6 +159,24 @@ export async function getMediaById(
               hasExactTime: nextEpisode.hasExactTime,
             }
           : null,
+    };
+
+    if (!tmdbRes.ok) {
+      res.status(200).json({
+        ...baseResponse,
+        overview: null,
+        genres: [],
+        networks: [],
+        numberOfSeasons: 0,
+        numberOfEpisodes: 0,
+      });
+      return;
+    }
+
+    const tmdbDetail = (await tmdbRes.json()) as TMDBDetailResponse;
+
+    res.status(200).json({
+      ...baseResponse,
       overview: tmdbDetail.overview || null,
       genres: tmdbDetail.genres.map((g) => g.name),
       networks: tmdbDetail.networks.map((n) => ({

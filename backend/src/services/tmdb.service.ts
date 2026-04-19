@@ -24,6 +24,9 @@ export interface TMDBShowDetail {
 
 interface TMDBListShow {
   id: number;
+  poster_path: string | null;
+  popularity: number;
+  vote_count: number;
 }
 
 interface TMDBOnAirResponse {
@@ -81,7 +84,9 @@ async function fetchWithRetry<T>(url: string): Promise<T> {
       }
 
       if (!response.ok) {
-        throw new Error(`TMDB API returned status ${response.status} for ${url}`);
+        throw new Error(
+          `TMDB API returned status ${response.status} for ${url}`,
+        );
       }
 
       return (await response.json()) as T;
@@ -93,14 +98,16 @@ async function fetchWithRetry<T>(url: string): Promise<T> {
         const backoffMs = Math.pow(2, attempt) * 1000;
         console.warn(
           `TMDB fetch attempt ${attempt} failed. Retrying in ${backoffMs}ms...`,
-          error
+          error,
         );
         await sleep(backoffMs);
       }
     }
   }
 
-  throw new Error(`TMDB fetch failed after ${MAX_RETRIES} attempts: ${String(lastError)}`);
+  throw new Error(
+    `TMDB fetch failed after ${MAX_RETRIES} attempts: ${String(lastError)}`,
+  );
 }
 
 // --- Public Helpers ---
@@ -118,18 +125,19 @@ export function buildLogoUrl(logoPath: string | null): string | null {
 // --- Public API ---
 
 export async function fetchOnAirShows(): Promise<TMDBShowDetail[]> {
-  // Step 1: Collect all show IDs from paginated on_the_air list
-  const showIds: number[] = [];
+  const listShows: TMDBListShow[] = [];
   let currentPage = 1;
   let totalPages = 1;
 
   do {
-    console.log(`Fetching TMDB on_the_air page ${currentPage}/${totalPages}...`);
+    console.log(
+      `Fetching TMDB on_the_air page ${currentPage}/${totalPages}...`,
+    );
     const pageData = await fetchWithRetry<TMDBOnAirResponse>(
-      `${TMDB_BASE_URL}/tv/on_the_air?page=${currentPage}`
+      `${TMDB_BASE_URL}/tv/on_the_air?page=${currentPage}`,
     );
     totalPages = pageData.total_pages;
-    showIds.push(...pageData.results.map((s) => s.id));
+    listShows.push(...pageData.results);
     currentPage++;
 
     if (currentPage <= totalPages) {
@@ -137,26 +145,52 @@ export async function fetchOnAirShows(): Promise<TMDBShowDetail[]> {
     }
   } while (currentPage <= totalPages);
 
-  console.log(`Found ${showIds.length} on-air shows. Fetching details...`);
+  /**
+   *  Filter out spam/placeholder entries before making individual detail calls.
+   *  Legitimate shows always have a poster; spam entries have near-zero popularity
+   *  and zero votes since no real user has ever interacted with them.
+   */
+  const MIN_POPULARITY = 1.0;
+  const MIN_VOTE_COUNT = 1;
+  const eligible = listShows.filter(
+    (s) =>
+      s.poster_path !== null &&
+      s.popularity >= MIN_POPULARITY &&
+      s.vote_count >= MIN_VOTE_COUNT,
+  );
+
+  const filtered = listShows.length - eligible.length;
+  if (filtered > 0) {
+    console.log(
+      `Filtered out ${filtered} low-quality entries. Fetching details for ${eligible.length} shows...`,
+    );
+  } else {
+    console.log(`Found ${eligible.length} on-air shows. Fetching details...`);
+  }
 
   // Step 2: Fetch detail for each show to get next_episode_to_air
   const details: TMDBShowDetail[] = [];
 
-  for (let i = 0; i < showIds.length; i++) {
+  for (let i = 0; i < eligible.length; i++) {
     try {
       const detail = await fetchWithRetry<TMDBShowDetail>(
-        `${TMDB_BASE_URL}/tv/${showIds[i]}`
+        `${TMDB_BASE_URL}/tv/${eligible[i].id}`,
       );
       details.push(detail);
     } catch (error) {
-      console.error(`Failed to fetch details for TMDB show ID ${showIds[i]}:`, error);
+      console.error(
+        `Failed to fetch details for TMDB show ID ${eligible[i].id}:`,
+        error,
+      );
     }
 
-    if (i < showIds.length - 1) {
+    if (i < eligible.length - 1) {
       await sleep(DETAIL_DELAY_MS);
     }
   }
 
-  console.log(`TMDB fetch complete. Total shows with details: ${details.length}`);
+  console.log(
+    `TMDB fetch complete. Total shows with details: ${details.length}`,
+  );
   return details;
 }

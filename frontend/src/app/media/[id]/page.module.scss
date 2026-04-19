@@ -1,6 +1,8 @@
 .page {
   position: relative;
-  min-height: 100vh;
+  min-height: calc(100vh - 56px);
+  display: flex;
+  align-items: center;
 }
 
 .backdrop {
@@ -10,7 +12,7 @@
   background-size: cover;
   background-position: center top;
   filter: blur(40px) brightness(0.35) saturate(1.4);
-  transform: scale(1.08); // prevent blur edges from showing white
+  transform: scale(1.08);
 }
 
 .main {
@@ -19,7 +21,7 @@
   width: 100%;
   max-width: 1000px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  padding: 2rem 1.5rem 2rem;
 }
 
 .back {
@@ -28,6 +30,11 @@
   font-size: 0.9rem;
   color: color-mix(in srgb, var(--foreground) 60%, transparent);
   text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
   transition: color 0.15s ease;
 
   &:hover {

@@ -1,7 +1,7 @@
 import type { Metadata, ResolvingMetadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
+import BackButton from "@/components/BackButton";
 import type { MediaDetail } from "@/types/media";
 import Calendar from "@/components/Calendar";
 import TrackButton from "@/components/TrackButton";
@@ -56,9 +56,7 @@ export default async function MediaDetailPage({ params }: Props) {
       )}
 
       <main className={styles.main}>
-      <Link href="/" className={styles.back}>
-        &larr; Back to all shows
-      </Link>
+      <BackButton />
 
       <div className={styles.hero}>
         <div className={styles.posterWrapper}>
