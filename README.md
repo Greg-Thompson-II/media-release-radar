@@ -1,71 +1,74 @@
 # Real-Time Media Release Radar
 
-A full-stack, multi-tenant web application that automatically tracks and displays upcoming TV show releases. Built with a decoupled architecture, featuring a self-healing background data-ingestion engine, secure JWT authentication, and a highly optimized Next.js frontend.
+A high-performance, full-stack web application designed to track and display upcoming international TV show releases. This project utilizes a decoupled monorepo architecture, featuring a self-healing background data-ingestion engine, secure JWT authentication, and a production-optimized Next.js frontend.
 
-## 🚀 Current Status: Phase 4 Complete (Pre-Deployment)
+## 🔗 Live Links
 
+- **Frontend (Vercel):** [Insert your Vercel URL here]
+- **Backend (Railway):** [Insert your Railway Domain URL here]
+
+## 🚀 Deployment Status: Phase 5 Complete (Production Live)
+
+- **Cloud Infrastructure:** Successfully migrated from local development to a distributed production environment using Vercel (Edge) and Railway.
+- **Networking:** Optimized port routing (8080) for high-concurrency API requests and cross-origin security.
 - **Data Engine:** Automated hybrid synchronization (TMDB + TVMaze) for hyper-accurate, timezone-aware release timestamps.
-- **Authentication:** Enterprise-grade user sessions via Clerk with secure Express middleware validation.
-- **Frontend:** Server-Side Rendered (SSR) discovery dashboard and a personalized, localized chronological release calendar.
+- **Authentication:** Enterprise-grade user sessions via Clerk with cross-domain Express middleware validation.
 
 ## 🛠 Tech Stack
 
-- **Frontend:** Next.js 16 (App Router), React, TypeScript, SCSS Modules, Clerk (@clerk/nextjs)
-- **Backend:** Node.js, Express, TypeScript, node-cron, Clerk Express SDK (@clerk/express)
-- **Database:** PostgreSQL (via Neon)
-- **ORM:** Prisma 7 (@prisma/adapter-pg)
-- **External APIs:** TMDB (The Movie Database), TVMaze
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | Next.js 16 (App Router), React, TypeScript, SCSS Modules, Clerk |
+| **Backend** | Node.js, Express, TypeScript, `node-cron`, Clerk Express SDK |
+| **Database** | PostgreSQL (via Neon) |
+| **ORM** | Prisma 7 |
+| **External APIs** | TMDB (The Movie Database), TVMaze |
 
 ## ✨ Key Features
 
-- **Multi-Tenant Architecture:** Secure user authentication using Clerk. The Next.js frontend securely transmits short-lived JWTs to the Express backend, ensuring complete data isolation for individual user watchlists.
-- **Hybrid Data Ingestion Engine:** A background `node-cron` job automatically hydrates the database. It utilizes TMDB for robust media metadata and gracefully falls back to the TVMaze API to fetch exact, to-the-minute UTC release timestamps.
-- **Self-Healing Database:** The data engine automatically prunes shows that are no longer airing, keeping the PostgreSQL database lean (averaging ~650 active records).
-- **Personalized Agenda Calendar:** A custom UI timeline that aggregates a specific user's tracked shows, chronologically sorted and dynamically converted to their local timezone using the native `Intl.DateTimeFormat` API.
-- **Optimized UI & Hydration:** Next.js Server Components fetch and render the discovery grid, while Client Components seamlessly hydrate interactive states (like the tracking buttons) based on the user's secure database records.
-- **Advanced Client Filtering:** Users can search titles via a real-time text input or toggle between the global discovery feed and their private watchlist without triggering redundant network requests.
-- **Dynamic SEO Metadata:** Integrates the Next.js Metadata API to generate unique browser tab titles and SEO context dynamically based on specific show parameters.
+- **Intelligent Filtering Purge:** The ingestion engine maintains high data quality by targeting international shows with significant viewership and ratings. To keep the UI noise-free and the database lean, the engine automatically filters out low-rated content and entries with fewer than two released episodes.
+- **Decoupled Architecture:** Built as a monorepo with strict separation of concerns. The Next.js frontend communicates with the Express API via secure, short-lived JWTs, ensuring complete data isolation and a modular developer experience.
+- **Self-Healing Data Engine:** A background `node-cron` job manages database hygiene. It utilizes TMDB for robust metadata and falls back to TVMaze for to-the-minute UTC release timestamps, while automatically pruning inactive or canceled shows.
+- **Personalized Chronological Agenda:** A custom UI timeline aggregates a user's tracked shows, chronologically sorted and dynamically converted to their local timezone using the native `Intl.DateTimeFormat` API.
+- **SSR & Hydration Strategy:** Utilizes Next.js Server Components for the initial discovery grid render to maximize SEO and performance, while Client Components handle real-time tracking states and interactive filtering.
 
-## 🗺️ Roadmap & Upcoming Phases
+## 🗺️ Roadmap
 
-**Phase 5: Automated Notifications**
+**Phase 6: Automated Notifications**
+- Integrate push notifications or email alerts (via SendGrid/Resend) to notify users the moment a tracked show airs based on TVMaze timestamp data.
 
-- Integrate push notifications or email alerts (via SendGrid/Resend) to notify users the exact minute a tracked show airs based on TVMaze timestamp data.
+**Phase 7: Custom Notification Logic**
+- Implement user-facing settings to adjust notification lead times (e.g., 30 minutes before, exactly at air time, or a daily morning digest).
 
-**Phase 6: Production Deployment**
+**Phase 8: Direct Streaming Integration**
+- Aggregate and display live deep-links to official streaming services (Netflix, Crunchyroll, HBO Max, etc.) within notifications and the UI, allowing users to jump directly to the content upon release.
 
-- Deploy the Next.js frontend to Vercel.
-- Deploy the Node.js/Express backend data engine to Render or Railway.
-- Migrate from local development environment variables to production secrets.
+**Phase 9: Advanced Analytics**
+- Implement dashboard metrics for user tracking trends and "Most Anticipated" global releases.
 
 ## ⚙️ Local Development Setup
 
-### 1. Environment Variables
+To run this project locally, ensure you have the following variables configured in your respective `.env` files.
 
-You will need to configure `.env` files in both the frontend and backend directories.
-
-**Backend (`backend/.env`):**
+### 1. Backend (`backend/.env`)
 
 ```env
-PORT=5000
+PORT=8080
 DATABASE_URL="postgresql://user:password@host/db"
 TMDB_API_TOKEN="your_tmdb_read_access_token"
 CLERK_PUBLISHABLE_KEY="pk_test_..."
 CLERK_SECRET_KEY="sk_test_..."
 ```
 
-**Frontend (`frontend/.env.local`):**
+### 2. Frontend (`frontend/.env.local`)
 
 ```env
-BACKEND_URL="http://localhost:5000"
-NEXT_PUBLIC_BACKEND_URL="http://localhost:5000"
+NEXT_PUBLIC_BACKEND_URL="http://localhost:8080"
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
 CLERK_SECRET_KEY="sk_test_..."
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 ```
 
-### 2. Run the Application
+### 3. Execution
 
 Start the backend server and data engine:
 
@@ -73,7 +76,6 @@ Start the backend server and data engine:
 cd backend
 npm install
 npx prisma generate
-npx prisma migrate dev
 npm run dev
 ```
 
