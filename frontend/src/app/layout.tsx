@@ -26,7 +26,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+    >
       <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
         <body>
           <nav className={styles.nav}>
@@ -34,8 +36,12 @@ export default function RootLayout({
               Media Release Radar
             </Link>
             <div className={styles.navLinks}>
-              <Link href="/" className={styles.navLink}>All Shows</Link>
-              <Link href="/calendar" className={styles.navLink}>Calendar</Link>
+              <Link href="/" className={styles.navLink}>
+                All Shows
+              </Link>
+              <Link href="/calendar" className={styles.navLink}>
+                Calendar
+              </Link>
             </div>
             <div className={styles.authArea}>
               <Show when="signed-out">
