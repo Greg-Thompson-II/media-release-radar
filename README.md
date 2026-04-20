@@ -4,8 +4,8 @@ A high-performance, full-stack web application designed to track and display upc
 
 ## 🔗 Live Links
 
-- **Frontend (Vercel):** [Insert your Vercel URL here]
-- **Backend (Railway):** [Insert your Railway Domain URL here]
+- **Frontend (Vercel):** https://media-release-radar.vercel.app/ 
+- **Backend (Railway):** media-release-radar-production.up.railway.app
 
 ## 🚀 Deployment Status: Phase 5 Complete (Production Live)
 
