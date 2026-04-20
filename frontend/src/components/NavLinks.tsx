@@ -13,17 +13,29 @@ export default function NavLinks() {
   const isWatchlist = pathname === "/" && watchlist;
   const isCalendar = pathname === "/calendar";
 
+  const links = [
+    { href: "/", label: "All Shows", active: isAllShows },
+    { href: "/?watchlist=1", label: "My Watchlist", active: isWatchlist },
+    { href: "/calendar", label: "Calendar", active: isCalendar },
+  ];
+
   return (
-    <div className={styles.navLinks}>
-      <Link href="/" className={`${styles.navLink} ${isAllShows ? styles.navLinkActive : ""}`}>
-        All Shows
-      </Link>
-      <Link href="/?watchlist=1" className={`${styles.navLink} ${isWatchlist ? styles.navLinkActive : ""}`}>
-        My Watchlist
-      </Link>
-      <Link href="/calendar" className={`${styles.navLink} ${isCalendar ? styles.navLinkActive : ""}`}>
-        Calendar
-      </Link>
-    </div>
+    <>
+      <div className={styles.navLinks}>
+        {links.map(({ href, label, active }) => (
+          <Link key={href} href={href} className={`${styles.navLink} ${active ? styles.navLinkActive : ""}`}>
+            {label}
+          </Link>
+        ))}
+      </div>
+
+      <nav className={styles.bottomNav} aria-label="Primary navigation">
+        {links.map(({ href, label, active }) => (
+          <Link key={href} href={href} className={`${styles.bottomNavLink} ${active ? styles.bottomNavLinkActive : ""}`}>
+            {label}
+          </Link>
+        ))}
+      </nav>
+    </>
   );
 }
