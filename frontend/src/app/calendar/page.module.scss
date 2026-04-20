@@ -7,6 +7,15 @@
   @media (min-width: 640px) {
     padding: 2rem 1.5rem 6rem;
   }
+
+  @media (min-width: 1280px) {
+    max-width: 1100px;
+  }
+
+  @media (min-width: 1600px) {
+    max-width: 1400px;
+    padding: 3rem 2rem 6rem;
+  }
 }
 
 .header {

@@ -31,6 +31,15 @@ $shimmer-bg: linear-gradient(
   max-width: 1000px;
   margin: 0 auto;
   padding: 2rem 1.5rem 2rem;
+
+  @media (min-width: 1280px) {
+    max-width: 1200px;
+  }
+
+  @media (min-width: 1600px) {
+    max-width: 1440px;
+    padding: 3rem 2rem 3rem;
+  }
 }
 
 .skeleton {
@@ -54,6 +63,10 @@ $shimmer-bg: linear-gradient(
   @media (max-width: 640px) {
     flex-direction: column;
   }
+
+  @media (min-width: 1280px) {
+    gap: 3.5rem;
+  }
 }
 
 .posterSkeleton {
@@ -69,6 +82,14 @@ $shimmer-bg: linear-gradient(
   @media (max-width: 640px) {
     width: 140px;
   }
+
+  @media (min-width: 1280px) {
+    width: 240px;
+  }
+
+  @media (min-width: 1600px) {
+    width: 280px;
+  }
 }
 
 .details {
@@ -83,6 +104,14 @@ $shimmer-bg: linear-gradient(
   height: 2rem;
   width: 70%;
   border-radius: 6px;
+
+  @media (min-width: 1280px) {
+    height: 2.5rem;
+  }
+
+  @media (min-width: 1600px) {
+    height: 3rem;
+  }
 }
 
 .genreRow {

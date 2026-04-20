@@ -44,6 +44,11 @@
   }
 }
 
+.navLinkActive {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 10%, transparent);
+}
+
 .authArea {
   display: flex;
   align-items: center;

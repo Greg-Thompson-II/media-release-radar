@@ -12,7 +12,7 @@ interface MediaGridProps {
 
 export default function MediaGrid({ mediaList }: MediaGridProps) {
   const searchParams = useSearchParams();
-  const [showOnlyTracked, setShowOnlyTracked] = useState(() => searchParams.get("watchlist") === "1");
+  const showOnlyTracked = searchParams.get("watchlist") === "1";
   const [query, setQuery] = useState("");
 
   const normalizedQuery = query.trim().toLowerCase();
@@ -28,23 +28,6 @@ export default function MediaGrid({ mediaList }: MediaGridProps) {
   return (
     <div className={styles.wrapper}>
       <div className={styles.controls}>
-        <div className={styles.toggleGroup}>
-          <button
-            className={`${styles.toggle} ${!showOnlyTracked ? styles.active : ""}`}
-            onClick={() => setShowOnlyTracked(false)}
-            aria-pressed={!showOnlyTracked}
-          >
-            View All
-          </button>
-          <button
-            className={`${styles.toggle} ${showOnlyTracked ? styles.active : ""}`}
-            onClick={() => setShowOnlyTracked(true)}
-            aria-pressed={showOnlyTracked}
-          >
-            My Watchlist
-          </button>
-        </div>
-
         <input
           className={styles.search}
           type="search"

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { Suspense } from "react";
 import { ClerkProvider, SignInButton, Show, UserButton } from "@clerk/nextjs";
+import NavLinks from "@/components/NavLinks";
 import "./globals.css";
 import styles from "./layout.module.scss";
 
@@ -35,14 +37,9 @@ export default function RootLayout({
             <Link href="/" className={styles.brand}>
               Media Release Radar
             </Link>
-            <div className={styles.navLinks}>
-              <Link href="/" className={styles.navLink}>
-                All Shows
-              </Link>
-              <Link href="/calendar" className={styles.navLink}>
-                Calendar
-              </Link>
-            </div>
+            <Suspense fallback={<div className={styles.navLinks} />}>
+              <NavLinks />
+            </Suspense>
             <div className={styles.authArea}>
               <Show when="signed-out">
                 <SignInButton>

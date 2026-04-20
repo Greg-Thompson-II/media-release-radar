@@ -10,7 +10,7 @@
   inset: 0;
   z-index: 0;
   background-size: cover;
-  background-position: center top;
+  background-position: center center;
   filter: blur(40px) brightness(0.35) saturate(1.4);
   transform: scale(1.08);
 }
@@ -22,6 +22,15 @@
   max-width: 1000px;
   margin: 0 auto;
   padding: 2rem 1.5rem 2rem;
+
+  @media (min-width: 1280px) {
+    max-width: 1200px;
+  }
+
+  @media (min-width: 1600px) {
+    max-width: 1440px;
+    padding: 3rem 2rem 3rem;
+  }
 }
 
 .back {
@@ -50,6 +59,10 @@
   @media (max-width: 640px) {
     flex-direction: column;
   }
+
+  @media (min-width: 1280px) {
+    gap: 3.5rem;
+  }
 }
 
 .posterWrapper {
@@ -64,6 +77,14 @@
 
   @media (max-width: 640px) {
     width: 140px;
+  }
+
+  @media (min-width: 1280px) {
+    width: 240px;
+  }
+
+  @media (min-width: 1600px) {
+    width: 280px;
   }
 }
 
@@ -89,6 +110,14 @@
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.2;
+
+  @media (min-width: 1280px) {
+    font-size: 2.25rem;
+  }
+
+  @media (min-width: 1600px) {
+    font-size: 2.75rem;
+  }
 }
 
 .genres {
@@ -150,4 +179,9 @@
   line-height: 1.65;
   color: color-mix(in srgb, var(--foreground) 80%, transparent);
   max-width: 65ch;
+
+  @media (min-width: 1280px) {
+    font-size: 1rem;
+    max-width: 75ch;
+  }
 }
