@@ -8,6 +8,7 @@ import mediaRouter from "./routes/media.routes.js";
 import watchlistRouter from "./routes/watchlist.routes.js";
 import calendarRouter from "./routes/calendar.routes.js";
 import { startSyncJob } from "./jobs/sync.job.js";
+import { sendShowNotification } from "./services/email.service.js";
 
 // Initialize Express
 const app = express();
@@ -16,10 +17,12 @@ const PORT = process.env.PORT || 5000;
 // Standard Middleware
 app.use(cors());
 app.use(express.json());
-app.use(clerkMiddleware({
-  publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
-  secretKey: process.env.CLERK_SECRET_KEY,
-}));
+app.use(
+  clerkMiddleware({
+    publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+    secretKey: process.env.CLERK_SECRET_KEY,
+  }),
+);
 
 // Routes
 app.use("/api/sync", syncRouter);

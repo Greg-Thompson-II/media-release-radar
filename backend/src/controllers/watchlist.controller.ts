@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getAuth } from "@clerk/express";
+import { getAuth, clerkClient } from "@clerk/express";
 import { prisma } from "../lib/prisma.js";
 
 export async function addToWatchlist(
@@ -25,11 +25,22 @@ export async function addToWatchlist(
       return;
     }
 
+    // Fetch the primary email from Clerk's backend API
+    const clerkUser = await clerkClient.users.getUser(userId);
+    const primaryEmail = clerkUser.emailAddresses.find(
+      (e) => e.id === clerkUser.primaryEmailAddressId,
+    )?.emailAddress;
+
+    if (primaryEmail === undefined) {
+      res.status(400).json({ message: "Could not resolve primary email from Clerk" });
+      return;
+    }
+
     // Upsert the Clerk user into our DB so we have a local FK to track against
     const user = await prisma.user.upsert({
       where: { clerkId: userId },
-      update: {},
-      create: { clerkId: userId },
+      update: { email: primaryEmail },
+      create: { clerkId: userId, email: primaryEmail },
     });
 
     // Upsert is idempotent — safe to call multiple times for the same show
